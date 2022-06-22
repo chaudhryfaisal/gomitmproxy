@@ -262,7 +262,7 @@ func (p *Proxy) handleRequest(ctx *Context) error {
 		// nolint:bodyclose
 		res, err := p.transport.RoundTrip(session.req)
 		if err != nil {
-			log.Error("id=%s: failed to round trip: %v", session.ID(), err)
+			log.Error("id=%s: failed to round trip: %v url=%s", session.ID(), err, session.req.URL.String())
 			p.raiseOnError(session, err)
 			// res body is closed below (see session.res.body.Close())
 			// nolint:bodyclose
@@ -270,7 +270,7 @@ func (p *Proxy) handleRequest(ctx *Context) error {
 
 			if strings.Contains(err.Error(), "x509: ") ||
 				strings.Contains(err.Error(), errClientCertRequested.Error()) {
-				log.Printf("id=%s: adding %s to invalid TLS hosts due to: %v", session.ID(), session.req.Host, err)
+				log.Printf("id=%s: adding %s to invalid TLS hosts due to: %v url=%s", session.ID(), session.req.Host, err, session.req.URL.String())
 				p.invalidTLSHostsMu.Lock()
 				p.invalidTLSHosts[session.req.Host] = true
 				p.invalidTLSHostsMu.Unlock()
@@ -385,7 +385,7 @@ func (p *Proxy) handleTunnel(session *Session) error {
 		// Handshake with the remote server
 		if err := tlsConn.Handshake(); err != nil {
 			// TODO: Consider adding to invalidTLSHosts? -- we should do this if this happens a couple of times in a short period of time
-			log.Error("id=%s: failed to handshake with the server: %v", session.ID(), err)
+			log.Error("id=%s: failed to handshake with the server: %v url=%s", session.ID(), err, session.req.URL.String())
 			return err
 		}
 
@@ -396,7 +396,7 @@ func (p *Proxy) handleTunnel(session *Session) error {
 	// write the original request to the connection
 	err = session.req.Write(remoteConn)
 	if err != nil {
-		log.Error("id=%s: failed to write request: %v", session.ID(), err)
+		log.Error("id=%s: failed to write request: %v", session.ID(), err, session.req.URL.String())
 		return err
 	}
 
@@ -469,7 +469,7 @@ func (p *Proxy) handleConnect(session *Session) error {
 			// Handshake with the local client
 			if err := tlsConn.Handshake(); err != nil {
 				// TODO: Consider adding to invalidTLSHosts? -- we should do this if this happens a couple of times in a short period of time
-				log.Error("id=%s: failed to handshake with the client: %v", session.ID(), err)
+				log.Error("id=%s: failed to handshake with the client: %v url=%s", session.ID(), err, session.req.URL.String())
 				return err
 			}
 
