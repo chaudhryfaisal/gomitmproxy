@@ -23,7 +23,7 @@ var errClientCertRequested = errors.New("tls: client cert authentication unsuppo
 
 const defaultTimeout = 5 * time.Minute
 const dialTimeout = 30 * time.Second
-const tlsHandshakeTimeout = 10 * time.Second
+const defaultTLSHandshakeTimeout = 10 * time.Second
 
 // Proxy is a structure with the proxy server configuration and current state
 type Proxy struct {
@@ -52,6 +52,7 @@ type Proxy struct {
 
 // NewProxy creates a new instance of the Proxy
 func NewProxy(config Config) *Proxy {
+	config.UpdateDefaults()
 	proxy := &Proxy{
 		Config: config,
 		transport: &http.Transport{
@@ -59,23 +60,17 @@ func NewProxy(config Config) *Proxy {
 			// TODO: Remove when HTTP/2 can be supported
 			TLSNextProto:          make(map[string]func(string, *tls.Conn) http.RoundTripper),
 			Proxy:                 http.ProxyFromEnvironment,
-			TLSHandshakeTimeout:   tlsHandshakeTimeout,
+			TLSHandshakeTimeout:   config.TLSHandshakeTimeout,
 			ExpectContinueTimeout: time.Second,
-			TLSClientConfig: &tls.Config{
-				GetClientCertificate: func(info *tls.CertificateRequestInfo) (certificate *tls.Certificate, e error) {
-					// We purposefully cause an error here so that the http.Transport.RoundTrip method failed
-					// In this case we'll receive the error and will be able to add the host to invalidTLSHosts
-					return nil, errClientCertRequested
-				},
-			},
+			TLSClientConfig:       config.TLSClientConfig,
 		},
-		timeout:         defaultTimeout,
+		timeout:         config.Timeout,
 		invalidTLSHosts: map[string]bool{},
 		closing:         make(chan bool),
 	}
 	proxy.dial = (&net.Dialer{
-		Timeout:   dialTimeout,
-		KeepAlive: dialTimeout,
+		Timeout:   config.DialTimeout,
+		KeepAlive: config.DialKeepAlive,
 	}).Dial
 
 	if len(config.MITMExceptions) > 0 {

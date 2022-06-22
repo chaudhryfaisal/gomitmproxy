@@ -4,12 +4,19 @@ import (
 	"crypto/tls"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/chaudhryfaisal/gomitmproxy/mitm"
 )
 
 // Config is the configuration of the Proxy
 type Config struct {
+	Timeout             time.Duration // Timeout
+	TLSHandshakeTimeout time.Duration // TLSHandshakeTimeout
+	DialKeepAlive       time.Duration // DialKeepAlive
+	DialTimeout         time.Duration // DialTimeout
+	TLSClientConfig     *tls.Config   // TLSClientConfig
+
 	ListenAddr *net.TCPAddr // Address to listen to
 
 	// TLSConfig is a config to use for the HTTP over TLS proxy
@@ -64,4 +71,32 @@ type Config struct {
 	// OnError is called if there's an issue with retrieving
 	// the response from the remote server.
 	OnError func(session *Session, err error)
+}
+
+func (c *Config) UpdateDefaults() {
+	if c.Timeout.Seconds() == 0 {
+		c.Timeout = defaultTimeout
+	}
+	if c.TLSHandshakeTimeout.Seconds() == 0 {
+		c.TLSHandshakeTimeout = defaultTLSHandshakeTimeout
+	}
+	if c.DialTimeout.Seconds() == 0 {
+		c.DialTimeout = dialTimeout
+	}
+	if c.DialKeepAlive.Seconds() == 0 {
+		c.DialKeepAlive = dialTimeout
+	}
+	if c.TLSClientConfig == nil {
+		c.TLSClientConfig = DefaultTLSClientConfig()
+	}
+}
+
+func DefaultTLSClientConfig() *tls.Config {
+	return &tls.Config{
+		GetClientCertificate: func(info *tls.CertificateRequestInfo) (certificate *tls.Certificate, e error) {
+			// We purposefully cause an error here so that the http.Transport.RoundTrip method failed
+			// In this case we'll receive the error and will be able to add the host to invalidTLSHosts
+			return nil, errClientCertRequested
+		},
+	}
 }
