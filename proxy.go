@@ -396,7 +396,7 @@ func (p *Proxy) handleTunnel(session *Session) error {
 	// write the original request to the connection
 	err = session.req.Write(remoteConn)
 	if err != nil {
-		log.Error("id=%s: failed to write request: %v", session.ID(), err, session.req.URL.String())
+		log.Error("id=%s: failed to write request: %v url=%s", session.ID(), err, session.req.URL.String())
 		return err
 	}
 
