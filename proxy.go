@@ -374,14 +374,7 @@ func (p *Proxy) handleTunnel(session *Session) error {
 
 	// if we're inside a MITMed connection, we should open a TLS connection instead
 	if session.ctx.IsMITM() {
-		tlsConn := tls.Client(conn, &tls.Config{
-			ServerName: session.req.URL.Host,
-			GetClientCertificate: func(info *tls.CertificateRequestInfo) (certificate *tls.Certificate, e error) {
-				// We purposefully cause an error here so that the http.Transport.RoundTrip method failed
-				// In this case we'll receive the error and will be able to add the host to invalidTLSHosts
-				return nil, errClientCertRequested
-			},
-		})
+		tlsConn := tls.Client(conn, p.TLSClientConfig)
 		// Handshake with the remote server
 		if err := tlsConn.Handshake(); err != nil {
 			// TODO: Consider adding to invalidTLSHosts? -- we should do this if this happens a couple of times in a short period of time
