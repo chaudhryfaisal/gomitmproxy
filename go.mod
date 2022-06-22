@@ -1,4 +1,4 @@
-module github.com/AdguardTeam/gomitmproxy
+module github.com/chaudhryfaisal/gomitmproxy
 
 go 1.14
 

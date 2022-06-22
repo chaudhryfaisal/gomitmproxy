@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AdguardTeam/gomitmproxy/proxyutil"
+	"github.com/chaudhryfaisal/gomitmproxy/proxyutil"
 
 	"github.com/AdguardTeam/golibs/log"
 	"github.com/pkg/errors"

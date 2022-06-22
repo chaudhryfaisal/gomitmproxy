@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/AdguardTeam/gomitmproxy/proxyutil"
+	"github.com/chaudhryfaisal/gomitmproxy/proxyutil"
 )
 
 // See 2 (end of page 4) https://www.ietf.org/rfc/rfc2617.txt

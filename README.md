@@ -1,7 +1,7 @@
-[![Code Coverage](https://img.shields.io/codecov/c/github/AdguardTeam/gomitmproxy/master.svg)](https://codecov.io/github/AdguardTeam/gomitmproxy?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/AdguardTeam/gomitmproxy)](https://goreportcard.com/report/AdguardTeam/gomitmproxy)
-[![GolangCI](https://golangci.com/badges/github.com/AdguardTeam/gomitmproxy.svg)](https://golangci.com/r/github.com/AdguardTeam/gomitmproxy)
-[![Go Doc](https://godoc.org/github.com/AdguardTeam/gomitmproxy?status.svg)](https://godoc.org/github.com/AdguardTeam/gomitmproxy)
+[![Code Coverage](https://img.shields.io/codecov/c/github/chaudhryfaisal/gomitmproxy/master.svg)](https://codecov.io/github/chaudhryfaisal/gomitmproxy?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/chaudhryfaisal/gomitmproxy)](https://goreportcard.com/report/chaudhryfaisal/gomitmproxy)
+[![GolangCI](https://golangci.com/badges/github.com/chaudhryfaisal/gomitmproxy.svg)](https://golangci.com/r/github.com/chaudhryfaisal/gomitmproxy)
+[![Go Doc](https://godoc.org/github.com/chaudhryfaisal/gomitmproxy?status.svg)](https://godoc.org/github.com/chaudhryfaisal/gomitmproxy)
 
 # gomitmproxy
 
@@ -30,7 +30,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/AdguardTeam/gomitmproxy"
+	"github.com/chaudhryfaisal/gomitmproxy"
 )
 
 func main() {
